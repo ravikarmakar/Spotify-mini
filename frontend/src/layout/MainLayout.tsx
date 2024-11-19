@@ -8,8 +8,20 @@ import {
   ResizableHandle,
 } from "@/components/ui/resizable";
 
+import PlaybackControl from "./components/PlaybackControl.tsx";
+import { useEffect, useState } from "react";
+
 const MainLayOut = () => {
-  const isMobile = false;
+  const [isMobile, setMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setMobile(window.innerWidth < 768);
+
+    checkMobile();
+
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   return (
     <div className="h-screen bg-black text-white flex flex-col">
@@ -46,6 +58,8 @@ const MainLayOut = () => {
           <FriendsActivity />
         </ResizablePanel>
       </ResizablePanelGroup>
+
+      <PlaybackControl />
     </div>
   );
 };
