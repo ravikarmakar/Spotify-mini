@@ -4,35 +4,32 @@ import { Album } from "../models/album.model.js";
 
 export const getStats = async (req, res, next) => {
   try {
-    const [totalUsers, totalSongs, totalAlbums, uniqueArtists] =
-      await Promise.all([
-        User.countDocuments(),
-        Song.countDocuments(),
-        Album.countDocuments(),
+    const [
+      totalUsers,
+      totalSongs,
+      totalAlbums,
+      uniqueSongArtists,
+      uniqueAlbumArtists,
+    ] = await Promise.all([
+      User.countDocuments(),
+      Song.countDocuments(),
+      Album.countDocuments(),
+      Song.distinct("artist"), // Get unique artists from Song collection
+      Album.distinct("artist"), // Get unique artists from Album collection
+    ]);
 
-        Song.aggregate([
-          {
-            $unionwith: {
-              coll: "albums",
-              pipeline: [],
-            },
-          },
-          {
-            $group: {
-              _id: "$artist",
-            },
-          },
-          {
-            $count: "count",
-          },
-        ]),
-      ]);
+    // Combine unique artists from both collections
+    const uniqueArtists = new Set([
+      ...uniqueSongArtists,
+      ...uniqueAlbumArtists,
+    ]);
+    const totalArtists = uniqueArtists.size;
 
     res.status(200).json({
       totalUsers,
       totalSongs,
       totalAlbums,
-      totalArtists: uniqueArtists[0]?.count || 0,
+      totalArtists,
     });
   } catch (error) {
     console.log("Error in getStats controller", error);
