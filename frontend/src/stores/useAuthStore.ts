@@ -3,7 +3,7 @@ import { axiosInstance } from "@/lib/axios";
 
 interface AuthStore {
   isAdimn: boolean;
-  isLoaded: boolean;
+  isLoading: boolean;
   error: string | null;
 
   checkAdminStatus: () => Promise<void>;
@@ -12,20 +12,20 @@ interface AuthStore {
 
 export const useAuthStore = create<AuthStore>((set) => ({
   isAdimn: false,
-  isLoaded: false,
+  isLoading: false,
   error: null,
 
   checkAdminStatus: async () => {
-    set({ isLoaded: false, error: null });
+    set({ isLoading: false, error: null });
     try {
       const response = await axiosInstance.get("/admin/check");
       set({ isAdimn: response.data.admin });
     } catch (error: any) {
       set({ isAdimn: false, error: error.response.data.message });
     } finally {
-      set({ isLoaded: true });
+      set({ isLoading: true });
     }
   },
 
-  reset: () => set({ isAdimn: false, isLoaded: false, error: null }),
+  reset: () => set({ isAdimn: false, isLoading: false, error: null }),
 }));
