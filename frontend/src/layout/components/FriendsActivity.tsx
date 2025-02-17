@@ -8,9 +8,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Music } from "lucide-react";
 
 const FriendsActivity = () => {
-  const { users, fetchUsers } = useChatStore();
-
+  const { users, fetchUsers, onlineUsers, userActivities } = useChatStore();
   const { user } = useUser();
+
+  useEffect(() => {
+    if (user) fetchUsers();
+  }, [fetchUsers, user]);
 
   const isPlaying = true;
 
