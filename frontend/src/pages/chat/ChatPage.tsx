@@ -7,6 +7,7 @@ import ChatHeader from "./components/ChatHeader";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import MessageInput from "./components/MessageInput";
+import TopBar from "@/components/TopBar";
 
 const formatTime = (date: string) => {
   return new Date(date).toLocaleTimeString("en-US", {
@@ -24,15 +25,13 @@ const ChatPage = () => {
     if (user) fetchUsers();
   }, [fetchUsers, user]);
 
-  console.log({ messages });
-
   useEffect(() => {
     if (selectedUser) fetchMessages(selectedUser.clerkId);
   }, [selectedUser, fetchMessages]);
 
   return (
     <main className="h-full rounded-lg bg-gradient-to-b from-zinc-800 to-zinc-900 overflow-hidden">
-      {/* <Topbar /> */}
+      <TopBar />
 
       <div className="grid lg:grid-cols-[300px_1fr] grid-cols-[80px_1fr] h-[calc(100vh-180px)]">
         <UsersList />
@@ -64,8 +63,8 @@ const ChatPage = () => {
                       </Avatar>
 
                       <div
-                        className={`rounded-lg p-3 max-w-[70%]
-													${message.senderId === user?.id ? "bg-green-500" : "bg-zinc-800"}
+                        className={`rounded-2xl py-2 px-4 max-w-[70%]
+													${message.senderId === user?.id ? "bg-green-500/50" : "bg-zinc-800"}
 												`}
                       >
                         <p className="text-sm">{message.content}</p>

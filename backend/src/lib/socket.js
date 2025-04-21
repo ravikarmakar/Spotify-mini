@@ -35,7 +35,7 @@ export const initializeSocket = (server) => {
       try {
         const { senderId, receiverId, content } = data;
 
-        const message = new Message({
+        const message = await Message.create({
           senderId,
           receiverId,
           content,
@@ -46,7 +46,7 @@ export const initializeSocket = (server) => {
         if (receiverSocketId) {
           io.to(receiverSocketId).emit("receive_message", message);
         }
-
+        // update the sender's message list in realtime
         socket.emit("message_sent", message);
       } catch (error) {
         console.error("Message error:", error);

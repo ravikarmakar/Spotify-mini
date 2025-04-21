@@ -32,9 +32,6 @@ const socket = io(baseURL, {
       withCredentials: true, // This will allow you to send credentials
     },
   },
-  auth: {
-    userId: "", // You can set this to an empty string or a placeholder
-  },
 });
 
 export const useChatStore = create<ChatStore>((set, get) => ({
@@ -52,9 +49,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   initSocket: (userId: string) => {
     if (!get().isConnected) {
+      // socket.auth = { userId }; // Pass userId in the auth object
       socket.connect(); // Pass userId in the auth object
-      socket.emit("user_connected", userId);
-
       socket.emit("user_connected", userId);
 
       socket.on("users_online", (users: string[]) => {
@@ -93,8 +89,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       socket.on(
         "activity_updated",
-        (data: { userId: string; activity: string }) => {
-          const { userId, activity } = data;
+        ({ userId, activity }: { userId: string; activity: string }) => {
           set((state) => {
             const newActivities = new Map(state.userActivities);
             newActivities.set(userId, activity);
@@ -133,7 +128,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     socket.emit("send_message", { receiverId, senderId, content });
   },
 
-  fetchMessages: async (userId: string) => {
+  fetchMessages: async (userId) => {
     set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get(`/users/messages/${userId}`);
